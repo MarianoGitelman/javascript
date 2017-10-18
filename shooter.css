@@ -1,0 +1,185 @@
+@font-face {
+    font-family: arcade;
+    src: url("ARCADECLASSIC.TTF");
+}
+/*body{
+	background-color: black;
+    color: green;
+    font-family: monospace;
+    margin: 0px;
+    overflow: hidden;
+}*/
+.gameContainer{
+	background-color: black;
+    color: green;
+    font-family: monospace;	
+	width:100%;
+	height:600px;
+	margin: 0px;
+}
+.console{
+	display:none;
+	position: absolute;
+    border: 1px solid green;
+    box-shadow: 2px 2px 12px #030;
+}
+.console .counter{	
+	top:0px;
+	left:0px;
+}
+.console span.input {	
+	margin-left:10px;
+}
+.console span.input.pressed {	
+	font-weight:bold;
+	color:#0f0;
+}
+.playfield{
+	position:relative;
+	top:0px;
+	left:0px;
+	height:550px;
+}
+.vert{
+	float:left;
+	height:100%;
+	border-left:none;
+}
+
+.Actor{
+	position:absolute;
+}
+.Actor .hitbox{
+	position:absolute;
+	/*border:1px solid green;*/
+}
+.Actor.Ship{
+	width:50px;
+	height:50px;
+	left:50%;
+}
+.Actor.ship.PlayerShip{
+	top:80%;
+	/*background-color:green;*/
+	color:white;
+    background-image: url(sprites.png);
+    background-position: 564px -16px;
+    /*border: 1px solid white;*/
+}
+.Actor.ship.PlayerShip.dead{
+	color:red;
+}
+.Actor.ship.PlayerShip.collision{
+	background-color:white;
+	color:black;
+}
+.Actor.ship.EnemyShip{
+	top:70%;
+	/*background-color:blue;*/
+	color:white;
+    background-image: url(sprites2.png);
+    background-position: 564px -133px;	
+}
+.Actor.ship.EnemyShip.collision{
+	background-color:white;
+}
+.Actor.collision{
+	/*border:1px solid white;*/
+	
+}
+
+.Actor.ship.EnemyShip.EnemyShipType0{
+    background-position: 785px -37px;
+    height: 75px;
+    top: 70%;
+    width: 90px;	
+}
+.Actor.ship.EnemyShip.EnemyShipType1{
+    background-image: url("sprites3.png");
+    background-position: -106px 0px;
+    height: 79px;
+    width: 108px;	
+}
+
+.Actor.ship.EnemyShip.EnemyShipTypeBoss1{
+    background-position: 754px 309px;
+    width: 300px;
+    height: 285px;	
+}
+.Actor .hitbox{
+	/*background-color:rgba(0,255,255,0.5);*/
+}
+
+.Actor.Shoot{
+	background-color: #f22;
+    height: 3px;
+    width: 3px;
+}
+
+.Actor.Shoot.EnemyShoot{
+	width:6px;
+	height:6px;
+	
+}
+.Actor.Shoot.EnemyShoot.type1{
+	width:12px;
+	height:12px;
+}
+
+.starField{
+	position:absolute;
+	top:0px;
+	left: 0px;
+	/*z-index: -1000;*/
+	width:100%;
+	/*height: 100%;*/
+}
+.starField .layer{
+	width:100%;
+	height:100%;
+}
+.starField .backgroundStar{
+	position:absolute;
+	width:2px;
+	height: 2px;
+	background-color: rgb(128,128,255);
+	/*
+    box-shadow: 0px 0px 10px rgb(128,128,255),0px 0px 10px rgb(128,128,255),0px 0px 10px rgb(128,128,255);
+    background-color: rgb(128,128,255);	
+    */
+}
+
+.starField .layer.i0 .backgroundStar{
+	width:4px;
+	height: 4px;
+	/*
+    height: 5px;
+    width: 5px;
+    border-radius: 10px;
+    background-color: rgb(190,190,255);	
+    */
+}
+.starField .layer.i1 .backgroundStar{
+	width:2px;
+	height: 2px;
+}
+.starField .layer.i2 .backgroundStar{
+	width:1px;
+	height: 1px;
+}
+
+.hud{
+	position:relative;
+	top:0px;
+	width: 100%;
+	height: 50px;
+	border:1px solid green;
+	font-family: arcade;
+	
+}
+.hud table{ 
+	width:100%;
+	text-align: center;
+	color:#0f0;
+	table-layout: fixed;
+}

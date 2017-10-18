@@ -1,0 +1,29 @@
+<html>
+	<head>
+		<title>g</title>
+		<link href="shooter.css" type="text/css" rel="stylesheet">
+		<script src="jquery.js"></script>
+		<script src="mGame.js"></script>
+		<script src="shooter.js"></script>
+		
+		<script type="text/javascript" src="gameCharset.js"></script>
+
+	</head>
+
+	<script type="text/javascript">
+		var game;
+		$(document).ready(function(){
+			
+			game = new Shooter(
+				{
+					//target		: 'body'
+					target		: '.juego'
+				}
+			);
+		});
+
+	</script>
+	<body>
+		<div class="juego"></div>
+	</body>
+</html>

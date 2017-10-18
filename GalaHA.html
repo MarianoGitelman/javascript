@@ -1,0 +1,55 @@
+
+
+<head>
+<meta charset="utf-8">
+<title>GalaHA</title>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="gameCharset.js"></script>
+
+<link href="shooter.css" type="text/css" rel="stylesheet">
+<script src="mGame.js"></script>
+<script src="shooter.js"></script>
+
+</head>
+
+<body>
+
+<div class="juego"></div>
+<script> 
+    $(document).ready(function(){
+        //Conque espiando eh?
+        //No hay problema
+        
+        //Próximamente clases de programación via Skype
+    	
+    	var msgQueue = new MsgQueue({
+    	    target  : 'body',
+    	    msgs    : [
+    	        {
+    	            text: "YEAR 2316. LORD PALONSK RULES PROXA REVERSA GALAXY"
+    	        },
+    	        {
+    	            text: "HIS EMPIRE CONTROLS THE PEOPLE'S ACCESS TO MEDIA"
+    	        },
+    	        {
+    	            text: "AND PUNISHES THE REBELS WHO WANT TO LIVE FREE IN WHATSAPPONIA SYSTEM"
+    	        },
+    	        {
+    	            text: "YOU CAN END THIS DICTATORSHIP. HELP US"
+    	        }
+            ],
+            callback   : function(){
+    			var game = new Shooter(
+    				{
+    					//target		: 'body'
+    					target		: '.juego'
+    				}
+    			);
+    	     }            
+    	});
+    	msgQueue.run();
+    });	     
+</script>
+
+</body>
+</html>

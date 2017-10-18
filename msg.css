@@ -1,0 +1,41 @@
+@font-face {
+    font-family: arcade;
+    src: url("ARCADECLASSIC.TTF");
+}
+body{
+    background:black;
+    text-align:center;
+}
+.Msg {
+    border: 2px solid #0f0;
+    border-radius: 2px;
+    color: #0f0;
+    cursor: pointer;
+    display: inline-block;
+    font-family: arcade;
+    margin: auto;
+    padding: 5px;
+    position: relative;
+    word-spacing: 8px;
+    top: 0px;
+    margin: auto;
+    left: auto;
+}
+
+.Msg.th{
+    position:fixed;
+    text-align:center;
+    width:99%;
+    left:0px;
+    top:40%;
+    background-color: rgba(0,0,0,0.5);
+}
+.Msg.th .sprite {
+    margin:auto;
+    display: inline-block;
+}
+.Msg.th .text {
+    width:400px;
+    margin:auto;
+    display: inline-block;
+}

@@ -1,0 +1,12 @@
+todo list
+
+Corregir dirección disparos enemigos OK
+movimiento de enemigos por vector, para que al morir desaceleren. Hecho cambiando el rate de la Trajectory
+explosiones enemigos OK
+cálculo de dirección del shoot dentro de la clase shoot OK
+
+limpieza de actores en el loop
+Poner sprites lindos
+Sonido
+Background OK
+Historia, diálogos

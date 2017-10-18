@@ -1,0 +1,67 @@
+.raycaster{
+    height:300px;
+    /*width:100%;*/
+    background-color:black;
+    color:white;
+    font-family: monospace;
+    overflow:hidden;
+}
+.raycaster .world{
+    position: absolute;
+}
+.raycaster .col{
+    height:300px;
+    /*border-left:1px solid red;*/
+    width:10px;
+    float:left;
+    position:relative;
+}
+.raycaster .col .wall{
+    height:10px;
+    width:100%;background:green;
+    position:absolute;
+    font-size: 7px;
+}
+.raycaster .sky, .raycaster .floor{
+    width:100%;
+    height:50%;
+    position:absolute;
+    float:left;
+}
+.raycaster .sky{
+    top:0px;
+    background:#aaaaff;
+}
+.raycaster .floor{
+    bottom:0px;
+    background:#005500;
+}
+
+.console {
+    position: fixed;
+    
+}
+
+.minimap {
+    width: 100px;
+    height: 100px;
+    background: black;
+    color: white;
+    /*border: 1px solid green;*/
+    position: absolute;
+    right: 0;
+    top: 0;
+    zoom:7;
+}
+.minimap .actor{
+    height: 1px;
+    width: 1px;
+    background:#00ff00;
+    position:absolute;
+}
+.minimap .block{
+    height: 1px;
+    width: 1px;
+    background:white;
+    position:absolute;
+}
