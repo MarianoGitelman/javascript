@@ -1,4 +1,4 @@
-todo list
+﻿todo list
 
 Corregir dirección disparos enemigos OK
 movimiento de enemigos por vector, para que al morir desaceleren. Hecho cambiando el rate de la Trajectory
@@ -10,3 +10,5 @@ Poner sprites lindos
 Sonido
 Background OK
 Historia, diálogos
+
+prueba github
