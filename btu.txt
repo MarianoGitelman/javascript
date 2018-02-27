@@ -1,0 +1,8 @@
+TODO
+
+Crear clase Console (para inspeccionar parámetros en tiempo real)
+
+1- Instanciar actor y moverlo libremente
+    a. Hitboxes (poner algo contra lo que chocar)
+
+2- Generar mapa (tiles o libre?)

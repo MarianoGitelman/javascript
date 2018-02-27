@@ -74,7 +74,8 @@ function Actor(conf){
 		me.el.append(me.hitBoxes[si].el);
 		
 	}
-	
+	console.log('actor el', me.el);
+	console.log('actor target', conf.target, $(conf.target));
 	$(conf.target).append(me.el);
 	me.w = me.el.width();
 	me.h = me.el.height();
@@ -123,7 +124,7 @@ Actor.prototype.getX = function(){
 Actor.prototype.getY = function(){
 	return this.y;
 }
-Actor.prototype.update = function(){
+Actor.prototype.update = function(){	
 	var nextX = this.x+this.accel[0];
 	var nextY = this.y+this.accel[1];
 	var nextX2 = nextX + this.w;
@@ -334,4 +335,28 @@ function isInsideConstrain(a, fp){//devuelve si la posición de un actor está d
 	//a implementar
 	//console.log("isInsideConstrain", a, fp);
 	
+}
+
+function mConsole(conf){ //Consola flotante para debug
+	var me = this;
+	console.log('[mConsole]', conf);
+	$(conf.target).append('<div class="mConsole"></div>');
+	var text = $(conf.target).find('.mConsole')[0];	
+	if( !text ){
+		console.log('[mConsole] no se encontró target');
+		return;
+	}
+	
+	return {
+		update: function(str){
+			if( typeof str == 'string' ){
+				text.innerHTML = str;
+				return;
+			}
+			if( typeof str == 'object' ){
+				console.log('[mConsole] update. object');
+				return;
+			}
+		}
+	}
 }
