@@ -1,10 +1,22 @@
+.viewport{
+    height: 512px;
+    width: 512px;
+    border:1px solid red;
+    top: 200px;
+    left: 200px;
+    position:absolute;
+}
+
 .mConsole{
     position: fixed;
     top:0px;
     left:0px;
+    opacity: 0.5;
 }
 .mConsole p{
     margin:0;
+    background-color:black;
+    color:rgb(0, 255, 0);
 }
 
 .Actor, .mConsole{
@@ -12,8 +24,16 @@
 }
 
 .playfield{
+    position: absolute;
     height:500px;
     width:2000px;
+}
+
+.bg{
+   /* background: url('bg1.jpg');*/
+    background-position-y: center;
+    height:100%;
+    width:100%;
 }
 
 .Actor{
@@ -23,16 +43,54 @@
 .Actor.Person{
     width:50px;
     height:50px;
-    border:1px solid black;
+    border:1px solid gray;
 }
 
 .Actor.Hero{
-    border-color: green;
+    border-color: rgba(0, 128, 0, 0.356);
 }
 .Actor.Enemy{
-    border-color: red;
+    border-color: rgba(255, 0, 0, 0.349);
 }
 
 .Actor.collision{
     background-color:red;
+}
+.Actor .hitbox{
+    border:1px solid black;
+    position:absolute;
+}
+.Actor .attackbox{
+    border:1px solid blue;
+    position:absolute;
+}
+
+.tileworld{
+    position:absolute;
+    top:0px;
+    left:0px;
+}
+
+.tileworld .row{
+    float: left;
+    width:2000px;
+}
+
+.tileworld .tile{
+    float:left;
+    border:1px solid rgb(184, 184, 184);
+    font-family: monospace;
+    font-size: 12px;
+    /*height: 64px;
+    width: 64px;*/
+}
+
+.healthbar{
+    border:1px solid gray;
+    position: absolute;
+}
+.healthbar .value{
+    position:absolute;
+    background-color:red;
+    
 }

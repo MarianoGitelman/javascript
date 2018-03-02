@@ -4,17 +4,29 @@ function Btu(conf){
     console.log('[Btu] init');
 
     me.mainContainer = $(me.target);
-	me.mainContainer.addClass("gameContainer");
+	me.mainContainer.addClass("gameContainer viewport");
     me.target= me.target;
-    me.mainContainer.append('<div class="playfield"></div>');
+    me.mainContainer.append('<div class="playfield" style="left:0;top:0;"></div>');
     me.playfield = $(me.mainContainer).find('.playfield');
     me.playfield.h = me.playfield.height();
     me.playfield.w = me.playfield.width();
+
+    me.playfield.append('<div class="bg"></div>');
+    me.world = new TileWorld({
+        rows: 15,
+        columns: 20,
+        tileWidth: 64,
+        tileHeight: 64,
+        target: me.playfield,
+        viewPort: me.mainContainer[0]
+    });
+    
+    me.playfield[0].style.left = 0;
+    me.playfield[0].style.top = 0;
+    me.camera = new BtuCamera({target: me.playfield[0]});
     
     me.frame = 0;
-    me.input= new Input({target:document});
-
-    console.log("playfield", me.playfield);
+    me.input= new Input({target:document});    
 
     me.actors = [];
 
@@ -49,6 +61,8 @@ function Btu(conf){
             <p>frametime: ${me.lastFrameTime - me.frameTime}</p>
             <p>player x: ${me.player.x}</p>
             <p>player y: ${me.player.y}</p>
+            <p>attack: ${me.player.attackBoxes[0].enable}</p>
+            <p>camera: ${me.camera.x}, ${me.camera.y}</p>
         `);
     }
 
@@ -57,10 +71,12 @@ function Btu(conf){
     function processInputs(){
 		//aceleración
 		if( me.input.kLeft&&!me.input.kRight ){
-			me.player.walk(-10,0);
+            me.player.walk(-10,0);
+            me.camera.move(-10,0);
 		}
 		if( me.input.kRight&&!me.input.kLeft ){
-			me.player.walk(10,0);
+            me.player.walk(10,0);
+            me.camera.move(10,0);
 		}
 		if( me.input.kUp&&!me.input.kDown ){
 			me.player.walk(0,-10);
@@ -70,7 +86,7 @@ function Btu(conf){
 		}	
 		//shoot
 		if( me.input.kSpace ){
-			me.player.punch();
+			me.player.punch(0);
 		}
 		//weapon select
 		if( me.input.k1 ){
@@ -106,6 +122,19 @@ function Btu(conf){
 		if( playerCollision ){
 			me.player.collision();
         }
+
+        //vaciar toRemove
+
+        //check ataques player -> enemy
+        for( var i in me.actors ){
+            var actor = me.actors[i];
+            if( actor!=me.player ){                
+                if( isActorAttacked(actor, me.player) ){                    
+                    actor.doDamage(10);
+                }
+            }
+        }
+
         
         //update posiciones
 		for( var i in me.actors ){
@@ -115,6 +144,8 @@ function Btu(conf){
     }
 
     function renderFrame(){
+        me.world.update();
+        
 		for( var i in me.actors ){
 			me.actors[i].render();
 		}
@@ -147,7 +178,10 @@ function Btu(conf){
 }
 
 function Person(conf){
-	var me = this;
+    var me = this;
+    me.health = 100;
+    me.attackDuration = 30;
+    me.attackI = 0;
 	$.extend(me, conf);
 	var classNames = [];
 	if( conf.classNames ){
@@ -164,34 +198,76 @@ Person.prototype.walk = function(x, y){
     this.x+=x;
     this.y+=y;
 }
-Person.prototype.punch = function(){
-
+Person.prototype.punch = function(n){
+    if( !this.attackBoxes || !this.attackBoxes[n] ){
+        return;
+    }    
+    this.attackI++;//lanza el ataque
+    this.currentAttack = this.attackBoxes[n];
+    this.currentAttack.enable = true;    
 }
 Person.prototype.doDamage = function(d){
     this.health-=d;
 }
+Person.prototype.update = function(){    
+    Actor.prototype.update.call(this);
+    if( this.attackI > 0 ){//atacando
+        this.attackI++;
+        
+        if( this.attackI>=this.attackDuration ){
+            this.attackI = 0;
+            this.currentAttack.enable = false;
+            return;
+        }
+    }
+    this.el.label[0].innerText = this.health;
+}
 
 function Hero(conf){
-	var me = this;
+    var me = this;
+    this.hitBoxes = [{
+            height	: 100,
+            width	: 50,
+            top		: 0,
+            left	: 0
+        }
+    ];
+    this.attackBoxes = [
+        {
+            height	: 20,
+            width	: 75,
+            top		: 10,
+            left	: 0
+        },
+    ];
 	$.extend(me, conf);
 	var classNames = [];
 	if( conf.classNames ){
 		classNames = conf.classNames;
 	}
-	classNames.push('hero');
+    classNames.push('hero');
 	Person.call(this, $.extend(conf, {classNames:classNames}));
 	console.log("[Hero] constructor", me, conf);
     me.health = 100;
+    me.collisionAnimationDuration = 1;
 	return me;    
 }
 Hero.prototype = Object.create(Person.prototype);
 Hero.prototype.update = function(){
     Person.prototype.update.call(this);
-    this.el[0].innerText=this.x + ' ' + this.y;    
+    //this.el[0].innerText=this.x + ' ' + this.y;    
 }
 
 function Enemy(conf){
-	var me = this;
+    var me = this;
+    me.hitBoxes = [{
+            height	: 100,
+            width	: 50,
+            top		: 0,
+            left	: 0
+        }
+    ];
+
 	$.extend(me, conf);
 	var classNames = [];
 	if( conf.classNames ){
@@ -199,8 +275,33 @@ function Enemy(conf){
 	}
 	classNames.push('enemy');
 	Person.call(this, $.extend(conf, {classNames:classNames}));
-	console.log("[Enemy] constructor", me, conf);
+    console.log("[Enemy] constructor", me, conf);
+    me.components = [
+        new HealthBar({
+            target: me.el
+        })
+    ];    
+    console.log("[Enemy] hola", me.components);
     this.collisionAnimationDuration = 1;
 	return me;    
 }
 Enemy.prototype = Object.create(Person.prototype);
+
+function BtuCamera(conf){
+    var me = this;
+    $.extend(me, conf);
+    me.x = 0;
+    me.y = 0;   
+
+    return me;
+}
+BtuCamera.prototype.move = function (x, y){
+    this.x-= x;
+    this.y+= y;
+    //console.log('[BtuCamera]', this.target, this.x, this.y);
+    this.target.style.left=this.x;
+    this.target.style.top=this.y;
+}
+BtuCamera.prototype.getPos = function (){
+    return [this.x, this.y];
+}

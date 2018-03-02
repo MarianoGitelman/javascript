@@ -8,7 +8,7 @@ function Input(conf){
 	me.kSpace	= false;
 	me.kLeft	= false;
 	me.kRight	= false;
-	console.log("bind", me.target);
+	console.log("[Input] bind", me.target);
 	$(me.target).on("keydown", function(e){
 		//console.log("[Input] keydown", e.keyCode);
 		switch(e.keyCode){
@@ -34,16 +34,7 @@ function Input(conf){
 			case 50	: me.k2		= false; break;
 		}
 	});
-	/*$(me.target).on("mousedown", function(e){
-		me.mLeft = true;
-	});
-	$(me.target).on("mouseup", function(e){
-		me.mLeft = false;
-	});
 
-	$(me.target).on("mousemove", function(e){
-		//console.log(e.pageX);
-	});*/
 	$(me.target).on("click", function(e){
 		console.log("click!");
 	});
@@ -53,7 +44,7 @@ function Input(conf){
 
 function Actor(conf){
 	var me = this;
-	//console.log("[Actor] constructor", conf);
+	console.log("[Actor] constructor", conf);
 	var classNames = [];
 	if( conf.classNames ){
 		classNames = conf.classNames;
@@ -66,16 +57,27 @@ function Actor(conf){
 	me.collisionAnimationIndex = 0;
 	me.dyingI = -1;
 	me.dyingDuration = 10;
-	me.center	= [null, null];	
+	me.center	= [null, null];
+
+	me.el.label = $('<div class="label"></div>');
+	me.el.append(me.el.label);
 	
 	for( var si in me.hitBoxes ){
 		me.hitBoxes[si].el = $('<div class="hitbox"></div>');
-		me.hitBoxes[si].el.css(me.hitBoxes[si]);
-		me.el.append(me.hitBoxes[si].el);
-		
+		me.hitBoxes[si].el.css(me.hitBoxes[si]);	
+		me.el.append(me.hitBoxes[si].el);		
 	}
-	console.log('actor el', me.el);
-	console.log('actor target', conf.target, $(conf.target));
+
+	for( var si in me.attackBoxes ){
+		me.attackBoxes[si].el = $('<div class="attackbox"></div>');
+		me.attackBoxes[si].el.css(me.attackBoxes[si]);	
+		me.el.append(me.attackBoxes[si].el);		
+	}
+
+	for( var ci in me.components ){
+		me.components[ci].render();
+	}
+
 	$(conf.target).append(me.el);
 	me.w = me.el.width();
 	me.h = me.el.height();
@@ -180,6 +182,13 @@ Actor.prototype.update = function(){
 		s.y = this.y+s.top;
 		s.y2 = s.y+s.height;
 	}
+	for( var si in this.attackBoxes ){
+		var s = this.attackBoxes[si];
+		s.x = this.x+s.left;
+		s.x2 = s.x+s.width;
+		s.y = this.y+s.top;
+		s.y2 = s.y+s.height;
+	}	
 	
 	if( this.colliding ){
 		this.doCollision();
@@ -188,6 +197,11 @@ Actor.prototype.update = function(){
 	if( this.dyingI>=0 ){
 		this.doDying();
 	}
+
+	//actualizar acá Components
+	for( var ci in this.components ){
+		this.components[ci].update(this);
+	}	
 }
 Actor.prototype.setWidth = function(w){
 	this.width = w;
@@ -283,20 +297,16 @@ function isCollision(a1, a2){//deprecar
 }
 
 function isRectangleCollision(r1, r2){//actor1, actor2
-	if(
-		(r1.y>=r2.y && r1.y<=r2.y2 ||
-		r1.y2>=r2.y && r1.y2<=r2.y2)
-			&&
-		(r1.x>=r2.x && r1.x<=r2.x2 ||
-		r1.x2>=r2.x && r1.x2<=r2.x2)
-	)
-	{
-		return true;		
-	}
+	//console.log(r1.x, r1.y, r1.x2, r1.y2, r2.x, r2.y, r2.x2, r2.y2);
+	return	r1.x < r2.x2 &&
+			r1.x2 > r2.x &&
+			r1.y < r2.y2 &&
+			r1.y2 > r2.y;
+	
 }
 
-function isActorCollision(a1, a2){
-	if( a1.hitBoxes&&a1.hitBoxes.length>0 ){
+function isActorCollision(a1, a2){	
+	if( a1.hitBoxes&&a1.hitBoxes.length>0 ){		
 		for( var sa1i in a1.hitBoxes ){
 			if( a2.hitBoxes&&a2.hitBoxes.length>0 ){
 				for( var sa2i in a2.hitBoxes  ){
@@ -312,10 +322,12 @@ function isActorCollision(a1, a2){
 			}
 		}		
 	}
-	else{
+	else{		
 		if( a2.hitBoxes&&a2.hitBoxes.length>0 ){
 			for( var sa2i in a2.hitBoxes  ){
-				//console.log("check", a1, a2);
+				var b = a2.hitBoxes[sa2i];
+				//console.log("check", a1.x, a1.y, a1.x2, a1.y2, b.x, b.y, b.x2, b.y2);
+
 				if( isRectangleCollision(a1, a2.hitBoxes[sa2i]) ){
 					//console.log("col", a1, a2);
 					return true;
@@ -324,6 +336,19 @@ function isActorCollision(a1, a2){
 		}
 		else{
 			return isRectangleCollision(a1, a2);
+		}
+	}
+}
+
+function isActorAttacked(actor, attacker){
+	if( actor.hitBoxes && attacker.attackBoxes ){//actor tiene hitboxes y el atacante attackboxes		
+		for( var acti in actor.hitBoxes ){
+			for( var atti in attacker.attackBoxes ){
+
+				if( attacker.attackBoxes[atti].enable && attacker.attackI==1 && isRectangleCollision( actor.hitBoxes[acti], attacker.attackBoxes[atti] ) ){					
+					return true;
+				}
+			}
 		}
 	}
 }
@@ -339,7 +364,6 @@ function isInsideConstrain(a, fp){//devuelve si la posición de un actor está d
 
 function mConsole(conf){ //Consola flotante para debug
 	var me = this;
-	console.log('[mConsole]', conf);
 	$(conf.target).append('<div class="mConsole"></div>');
 	var text = $(conf.target).find('.mConsole')[0];	
 	if( !text ){
@@ -359,4 +383,113 @@ function mConsole(conf){ //Consola flotante para debug
 			}
 		}
 	}
+}
+
+function TileWorld(c){
+	var me = this;
+	$.extend(me, c);
+	
+	me.target.height = me.target.height();
+	me.target.width = me.target.width();
+	console.log('[TileWorld]', me.viewPort );
+	me.tiles=[];
+	for( var ri = 0; ri < me.rows; ri++ ){
+		for( var ci = 0; ci < me.columns; ci++ ){
+			if( !me.tiles[ri] ){
+				me.tiles[ri]=[];
+			}			
+			me.tiles[ri].push( new Tile({
+				height: c.tileHeight,
+				width: c.tileWidth,
+				x: ci * c.tileWidth,
+				y: ri * c.tileHeight
+			}) );
+		}
+	}
+
+	//markup
+	me.el = $('<div class="tileworld"></div>');
+	for( var ri in me.tiles ){
+		var row = me.tiles[ri];		
+		var rowEl = $('<div class="row"></div>');
+		for( var ci in row ){
+			var tile = row[ci];			
+			rowEl.append(tile.el);
+		}		
+		me.el.append(rowEl);
+	}
+	me.target.append(me.el);
+	return me;
+}
+TileWorld.prototype.update = function(){
+	var me = this;
+	for( var ri in me.tiles ){
+		var row = me.tiles[ri];
+		for( var ti in row ){
+			var tile = row[ti];
+			var tileRelx = tile.x + me.target[0].offsetLeft;
+			var tileRely = tile.y + me.target[0].offsetTop;
+			//dibujo solo los que están dentro de viewport
+			if( tileRelx <= me.viewPort.offsetWidth && 
+				tileRelx >= -me.tileWidth &&
+				tileRely <= me.viewPort.offsetHeight &&
+				tileRely >= -me.tileHeight
+			){
+				tile.el.style.color = '#000';
+				tile.el.style.visibility = "visible";
+			}
+			else{
+				tile.el.style.color = '#aaa';
+				tile.el.style.visibility = "hidden";
+			}
+			//tile.el.innerText = ri + ',' + ti + ' - ' + tile.x + ',' + tile.y + ' - ' + tileRelx + ',' + tileRely;
+		}
+	}
+
+}
+
+function Tile(c){
+	var me = this;
+	$.extend(me, c);
+	me.el = $('<div class="tile"></div>')[0];
+	me.el.style.width = c.width;
+	me.el.style.height = c.height;
+	return me;
+}
+
+function Component(conf){
+	var me = this;
+	$.extend(me, conf);
+	$(me.target).append(me.el);
+	return me;
+}
+
+function HealthBar(conf){
+	conf = conf||{};
+	var me = this;
+	console.log("[HealthBar] constructor", conf);
+	var orientation = conf.orientation||'h';
+	me.valueParameter = orientation=='h'?'width':'height';
+	var height = conf.height||4;
+	var width = conf.width||64;
+	me.max100 = orientation=='h'?width:height;
+	me.max100 = me.max100/100;	
+
+	me.el = $(`<div class="healthbar ${orientation}" style="height:${height};width:${width};" >
+				
+			</div>`);
+
+	var elValueDefaultStyle = orientation=='h'?'height:100%':'width:100%';
+	me.elValue = $('<div class="value" style="'+elValueDefaultStyle+'"></div>')[0];
+	me.el.append(me.elValue);
+
+	Component.call(this, conf);
+
+	return me;
+}
+HealthBar.prototype = Object.create(Component.prototype);
+HealthBar.prototype.update = function(owner){
+	this.value = owner.health;
+	var n = this.max100*this.value;
+	this.elValue.style[this.valueParameter]=n;
 }
