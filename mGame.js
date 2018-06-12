@@ -19,6 +19,9 @@ function Input(conf){
 			case 40	: me.kDown	= true; break;
 			case 49	: me.k1		= true; break;
 			case 50	: me.k2		= true; break;
+			case 65	: me.kA		= true; break;
+			case 83	: me.kS		= true; break;
+			case 68	: me.kD		= true; break;
 		}
 
 	});
@@ -32,6 +35,9 @@ function Input(conf){
 			case 40	: me.kDown	= false; break;
 			case 49	: me.k1		= false; break;
 			case 50	: me.k2		= false; break;
+			case 65	: me.kA		= false; break;
+			case 83	: me.kS		= false; break;
+			case 68	: me.kD		= false; break;			
 		}
 	});
 
@@ -467,7 +473,7 @@ function Component(conf){
 function HealthBar(conf){
 	conf = conf||{};
 	var me = this;
-	console.log("[HealthBar] constructor", conf);
+	//console.log("[HealthBar] constructor", conf);
 	var orientation = conf.orientation||'h';
 	me.valueParameter = orientation=='h'?'width':'height';
 	var height = conf.height||4;

@@ -1,0 +1,27 @@
+<html>
+	<head>
+		<title>g</title>
+		<link href="chargame.css" type="text/css" rel="stylesheet">
+		<script src="jquery.js"></script>
+		<script src="mGame.js"></script>
+		<script src="CharsGame.js"></script>
+	</head>
+
+	<script type="text/javascript">
+		var game;
+		$(document).ready(function(){
+			console.log("CharsGame");
+			
+			game = new CharsGame(
+				{
+					target		: '.juego',
+					nCols		: 90
+				}
+			);
+		});
+
+	</script>
+	<body>
+		<div class="juego"></div>
+	</body>
+</html>
